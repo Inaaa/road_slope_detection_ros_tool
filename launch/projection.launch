@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<launch>
+
+
+  <node name="point_segmentation" pkg="road_slope_detection_ros_tool" type="projection.py" output="screen" >
+
+
+  <!--node name="ring_keeper_node" pkg="road_slope_detection_ros_tool" type="ring_keeper" output="screen" />
+  <node name="road_rebuild_node" pkg="road_slope_detection_ros_tool" type="road_rebuild"  output="screen" />
+  <node name="surface_node" pkg="road_slope_detection_ros_tool" type="surface" ns="/sensor" output="screen" -->
+
+
+#launch-prefix="xterm -e python -m pdb "
+    </node>
+</launch>
+

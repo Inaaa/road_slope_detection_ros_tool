@@ -1,0 +1,16 @@
+<launch>
+
+  <arg name="config" default="$(find road_slope_detection_ros_tool)/launch/params/road_rebuild_parameters.yaml" />
+  <arg name="required" default="false"/>
+  <arg name="node_name" default="road_rebuild"/>
+
+  <!-- this is just to be compatible with the nodelet version -->
+  <arg name="nodelet_manager_name" default="nodelet_manager_road_rebuild"/>
+  <arg name="start_nodelet_manager" default="true"/>
+
+
+  <node pkg="road_slope_detection_ros_tool" type="road_rebuild" name="$(arg node_name)" ns="/sensor" output="screen">
+    <rosparam command="load" file="$(arg config)"/>
+  </node>
+
+</launch>

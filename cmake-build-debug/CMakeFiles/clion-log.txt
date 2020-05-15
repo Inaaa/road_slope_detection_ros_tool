@@ -1,0 +1,76 @@
+/usr/local/clion/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/chli/my_first_ws/src/road_slope_detection_ros_tool
+-- MRT CMake configuration file found: /opt/mrtsoftware/release/share/cmake/mrt_cmake_configuration.cmake
+-- Setting -march to sandybridge
+-- Using CATKIN_DEVEL_PREFIX: /home/chli/my_first_ws/src/road_slope_detection_ros_tool/cmake-build-debug/devel
+-- Using CMAKE_PREFIX_PATH: /home/chli/my_first_ws/devel;/opt/mrtros;/opt/mrtsoftware/local;/opt/mrtsoftware/release
+-- This workspace overlays: /home/chli/my_first_ws/devel;/opt/mrtros;/opt/mrtsoftware/local;/opt/mrtsoftware/release
+-- Found PythonInterp: /usr/bin/python2 (found suitable version "2.7.17", minimum required is "2") 
+-- Using PYTHON_EXECUTABLE: /usr/bin/python2
+-- Using Debian Python package layout
+-- Using empy: /usr/bin/empy
+-- Using CATKIN_ENABLE_TESTING: ON
+-- Call enable_testing()
+-- Using CATKIN_TEST_RESULTS_DIR: /home/chli/my_first_ws/src/road_slope_detection_ros_tool/cmake-build-debug/test_results
+-- Found gtest sources under '/usr/src/googletest': gtests will be built
+-- Found gmock sources under '/usr/src/googletest': gmock will be built
+-- Found PythonInterp: /usr/bin/python2 (found version "2.7.17") 
+-- Using Python nosetests: /usr/bin/nosetests-2.7
+-- catkin 0.7.23
+-- BUILD_SHARED_LIBS is on
+-- Using these message generators: gencpp;geneus;genlisp;gennodejs;genpy
+-- Eigen found (include: /usr/include/eigen3, version: 3.3.4)
+-- The imported target "vtkRenderingPythonTkWidgets" references the file
+   "/usr/lib/x86_64-linux-gnu/libvtkRenderingPythonTkWidgets.so"
+but this file does not exist.  Possible reasons include:
+* The file was deleted, renamed, or moved to another location.
+* An install or uninstall procedure did not complete successfully.
+* The installation package was faulty and contained
+   "/usr/lib/cmake/vtk-6.3/VTKTargets.cmake"
+but not all the files it references.
+
+-- The imported target "vtk" references the file
+   "/usr/bin/vtk"
+but this file does not exist.  Possible reasons include:
+* The file was deleted, renamed, or moved to another location.
+* An install or uninstall procedure did not complete successfully.
+* The installation package was faulty and contained
+   "/usr/lib/cmake/vtk-6.3/VTKTargets.cmake"
+but not all the files it references.
+
+-- OpenNI found (include: /usr/include/ni, lib: /usr/lib/libOpenNI.so)
+-- OpenNI2 found (include: /usr/include/openni2, lib: /usr/lib/libOpenNI2.so)
+-- OpenNI found (include: /usr/include/ni, lib: /usr/lib/libOpenNI.so)
+-- OpenNI2 found (include: /usr/include/openni2, lib: /usr/lib/libOpenNI2.so)
+-- QHULL found (include: /usr/include, lib: optimized;/usr/lib/x86_64-linux-gnu/libqhull.so;debug;/usr/lib/x86_64-linux-gnu/libqhull.so)
+-- Adding nodelet "ring_keeper"
+-- Adding library "road_slope_detection_ros_tool-ring_keeper-nodelet" with source src/ring_keeper/ring_keeper.cpp;src/ring_keeper/ring_keeper_nodelet.cpp, includes src/ring_keeper/ring_keeper.hpp
+-- Adding executable "ring_keeper" with source: src/ring_keeper/ring_keeper_node.cpp;src/ring_keeper/ring_keeper.hpp
+-- Adding nodelet "road_rebuild"
+-- Adding library "road_slope_detection_ros_tool-road_rebuild-nodelet" with source src/road_rebuild/road_rebuild.cpp;src/road_rebuild/road_rebuild_nodelet.cpp, includes src/road_rebuild/road_rebuild.hpp
+-- Adding executable "road_rebuild" with source: src/road_rebuild/road_rebuild_node.cpp;src/road_rebuild/road_rebuild.hpp
+-- Adding nodelet "surface"
+-- Adding library "road_slope_detection_ros_tool-surface-nodelet" with source src/surface/surface.cpp;src/surface/surface_nodelet.cpp, includes src/surface/surface.hpp
+-- Adding executable "surface" with source: src/surface/surface_node.cpp;src/surface/surface.hpp
+-- Marking libraries "road_slope_detection_ros_tool-ring_keeper-exec;road_slope_detection_ros_tool-road_rebuild-exec;road_slope_detection_ros_tool-surface-exec" of package "road_slope_detection_ros_tool" for installation
+-- Marking targets "road_slope_detection_ros_tool-ring_keeper-exec;road_slope_detection_ros_tool-road_rebuild-exec;road_slope_detection_ros_tool-surface-exec" of package "road_slope_detection_ros_tool" for installation
+-- Marking SHARED CONTENT FOLDER "launch" of package "road_slope_detection_ros_tool" for installation
+-- Marking SHARED CONTENT FOLDER "res" of package "road_slope_detection_ros_tool" for installation
+-- Marking FILE "nodelet_plugins.xml" of package "road_slope_detection_ros_tool" for installation
+-- Generating cmake exports for road_slope_detection_ros_tool to /home/chli/my_first_ws/src/road_slope_detection_ros_tool/cmake-build-debug/devel/share
+-- Adding gtest-rostest "road_slope_detection_ros_tool-rostest-ring_keeper_node-test" with test file test/ring_keeper_node.test
+-- Creating gtest 'road_slope_detection_ros_tool-rostest-ring_keeper_node-test' from test/ring_keeper_node.cpp
+-- Adding gtest-rostest "road_slope_detection_ros_tool-rostest-ring_keeper_nodelet-test" with test file test/ring_keeper_nodelet.test
+-- Creating gtest 'road_slope_detection_ros_tool-rostest-ring_keeper_nodelet-test' from test/ring_keeper_nodelet.cpp
+-- Adding gtest-rostest "road_slope_detection_ros_tool-rostest-road_rebuild_node-test" with test file test/road_rebuild_node.test
+-- Creating gtest 'road_slope_detection_ros_tool-rostest-road_rebuild_node-test' from test/road_rebuild_node.cpp
+-- Adding gtest-rostest "road_slope_detection_ros_tool-rostest-road_rebuild_nodelet-test" with test file test/road_rebuild_nodelet.test
+-- Creating gtest 'road_slope_detection_ros_tool-rostest-road_rebuild_nodelet-test' from test/road_rebuild_nodelet.cpp
+-- Adding gtest-rostest "road_slope_detection_ros_tool-rostest-surface_node-test" with test file test/surface_node.test
+-- Creating gtest 'road_slope_detection_ros_tool-rostest-surface_node-test' from test/surface_node.cpp
+-- Adding gtest-rostest "road_slope_detection_ros_tool-rostest-surface_nodelet-test" with test file test/surface_nodelet.test
+-- Creating gtest 'road_slope_detection_ros_tool-rostest-surface_nodelet-test' from test/surface_nodelet.cpp
+-- Adding nosetests in folder test
+-- Using Python nosetests: /usr/bin/nosetests-2.7
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/chli/my_first_ws/src/road_slope_detection_ros_tool/cmake-build-debug

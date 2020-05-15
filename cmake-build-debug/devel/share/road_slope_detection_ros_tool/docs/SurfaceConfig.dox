@@ -1,0 +1,12 @@
+\subsubsection parameters ROS parameters
+
+Reads and maintains the following parameters on the ROS server
+
+- \b "~verbosity" : \b [str] Sets the verbosity for this node min: , default: info, max: 
+- \b "~reference_frame" : \b [str] reference frame for surface min: , default: vehicle, max: 
+- \b "~dummy" : \b [double] My Dummy Parameter min: 0.0, default: 0.1, max: 1.0
+- \b "~dummy_subscriber_topic" : \b [str] Topic for example subscriber min: , default: in_topic, max: 
+- \b "~dummy_subscriber_queue_size" : \b [int] Queue size for example subscriber min: 0, default: 5, max: 2147483647
+- \b "~dummy_publisher_topic" : \b [str] Topic for example publisher min: , default: out_topic, max: 
+- \b "~dummy_publisher_queue_size" : \b [int] Queue size for example publisher min: 0, default: 5, max: 2147483647
+

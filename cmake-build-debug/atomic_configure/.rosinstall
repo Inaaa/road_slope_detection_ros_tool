@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/chli/my_first_ws/src/road_slope_detection_ros_tool/cmake-build-debug/devel/setup.sh

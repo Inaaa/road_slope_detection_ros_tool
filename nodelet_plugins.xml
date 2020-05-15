@@ -1,0 +1,18 @@
+<library path="lib/libring_keeper_nodelet">
+<class name="road_slope_detection_ros_tool/RingKeeperNodelet"
+       type="road_slope_detection_ros_tool::RingKeeperNodelet" base_class_type="nodelet::Nodelet">
+  <description></description>
+</class>
+</library>
+<library path="lib/libroad_rebuild_nodelet">
+<class name="road_slope_detection_ros_tool/RoadRebuildNodelet"
+       type="road_slope_detection_ros_tool::RoadRebuildNodelet" base_class_type="nodelet::Nodelet">
+  <description></description>
+</class>
+</library>
+<library path="lib/libsurface_nodelet">
+<class name="road_slope_detection_ros_tool/SurfaceNodelet"
+       type="road_slope_detection_ros_tool::SurfaceNodelet" base_class_type="nodelet::Nodelet">
+  <description></description>
+</class>
+</library>

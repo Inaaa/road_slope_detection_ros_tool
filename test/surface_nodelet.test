@@ -1,0 +1,7 @@
+<launch>
+    <test test-name="surface_nodelet_test" pkg="road_slope_detection_ros_tool" type="surface_nodelet-test" time-limit="60.0"/>
+    <include file="$(find road_slope_detection_ros_tool)/launch/surface_nodelet.launch">
+        <arg name="required" value="true"/>
+    </include>
+</launch>
+

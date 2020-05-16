@@ -66,8 +66,9 @@ class RoadPCL(object):
         a =CarMakerTrans()
         pts_2d = a.project_lidar_to_image(pc_velo)
         pc_velo2 = a.project_lidar_to_vehicle(pc_velo)
-
-        fov_inds = (pc_velo[:, 0] > 0) & (pc_velo[:, 0] < 30)
+        fov_inds = (pts_2d[:, 0] < 3000 - 1) & (pts_2d[:, 0] >= 1000) & \
+                   (pts_2d[:, 1] < 2400 - 1) & (pts_2d[:, 1] >= 900)
+        fov_inds = fov_inds & (pc_velo[:, 0] > 0) & (pc_velo[:, 0] < 30)
         imgfov_pc_velo = pc_velo[fov_inds, :]  # points in image
         imgfov_pc_velo2 = pc_velo2[fov_inds, :]
 
@@ -83,15 +84,16 @@ class RoadPCL(object):
 
         print("i max = ", imgfov_pts_2d.shape[0])
         for i in range(imgfov_pts_2d.shape[0]):
-
-            if np.any(labels[int(imgfov_pts_2d[i, 1]), int(imgfov_pts_2d[i, 0])] == 125) :
-                road_point.append(imgfov_pc_velo[i, :])
-                road_point2.append(imgfov_pc_velo2[i, :3])
-
-            elif  np.any(labels[int(imgfov_pts_2d[i, 1]), int(imgfov_pts_2d[i, 0])] == 255) :
-                road_point.append(imgfov_pc_velo[i, :])
-                road_point2.append(imgfov_pc_velo2[i, :3])
-
+            if int(imgfov_pts_2d[i, 1]) < 1500:
+                if labels[int(imgfov_pts_2d[i, 1] - 900), int(imgfov_pts_2d[i, 0] - 1000)] == 0:
+                    road_point.append(imgfov_pc_velo[i, :])
+                    road_point2.append(imgfov_pc_velo2[i, :3])
+                    road_pos.append(imgfov_pts_2d[i, :])
+            else:
+                if labels[589, int(imgfov_pts_2d[i, 0] - 1000)] == 0:
+                    road_point.append(imgfov_pc_velo[i, :])
+                    road_point2.append(imgfov_pc_velo2[i, :3])
+                    road_pos.append(imgfov_pts_2d[i, :])
 
 
         road_point = np.array(road_point)

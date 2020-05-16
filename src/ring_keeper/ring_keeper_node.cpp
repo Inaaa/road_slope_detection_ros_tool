@@ -11,6 +11,7 @@ ros::Publisher pub;
 void
 cloud_cb (const sensor_msgs::PointCloud2ConstPtr& cloud_msg)
 {
+    std::cout<< "###############"<< std::endl;
     // Container for original & filtered data
     pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
     pcl::PCLPointCloud2ConstPtr cloudPtr(cloud);
@@ -81,7 +82,7 @@ int main(int argc, char* argv[]) {
     std::cout<<"!!!!!!!!!!!!!!!!"<<std::endl;
 
     // Create a ROS subscriber for the input point cloud
-    ros::Subscriber sub = nh.subscribe ("/preproc/lidar/velodyne/fl/cartesian/points", 1, cloud_cb);
+    ros::Subscriber sub = nh.subscribe ("/lidar", 1, cloud_cb);
     std::cout<<"***********"<<std::endl;
 
     // Create a ROS publisher for the output point cloud

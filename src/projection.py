@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python
 import time
 
 from coordinate_conversion import Trans
@@ -11,16 +11,17 @@ import message_filters
 
 from cv_bridge import CvBridge, CvBridgeError
 
-#from sensor_msgs import point_cloud2
+from sensor_msgs import point_cloud2
 
 from sensor_msgs.msg import Image ,PointCloud2, PointField
 
-
+import time
 
 from std_msgs.msg import Header
 
 import sensor_msgs.point_cloud2 as pc2
 
+import matplotlib.pyplot as plt
 
 
 class RoadPCL(object):
@@ -63,7 +64,7 @@ class RoadPCL(object):
         rospy.signal_shutdown("see you later")
 
     def generate_disparity_from_velo(self,pc_velo ,labels):
-        a =CarMakerTrans()
+        a =Trans()
         pts_2d = a.project_lidar_to_image(pc_velo)
         pc_velo2 = a.project_lidar_to_vehicle(pc_velo)
         fov_inds = (pts_2d[:, 0] < 3000 - 1) & (pts_2d[:, 0] >= 1000) & \
@@ -79,7 +80,7 @@ class RoadPCL(object):
 
         imgfov_pts_2d = np.round(imgfov_pts_2d).astype(int)  # segmented position in image.(pixel)
         road_point = []
-        road_pos = []
+        
         road_point2 = []
 
         print("i max = ", imgfov_pts_2d.shape[0])
@@ -88,17 +89,15 @@ class RoadPCL(object):
                 if labels[int(imgfov_pts_2d[i, 1] - 900), int(imgfov_pts_2d[i, 0] - 1000)] == 0:
                     road_point.append(imgfov_pc_velo[i, :])
                     road_point2.append(imgfov_pc_velo2[i, :3])
-                    road_pos.append(imgfov_pts_2d[i, :])
+                    
             else:
                 if labels[589, int(imgfov_pts_2d[i, 0] - 1000)] == 0:
                     road_point.append(imgfov_pc_velo[i, :])
                     road_point2.append(imgfov_pc_velo2[i, :3])
-                    road_pos.append(imgfov_pts_2d[i, :])
-
 
         road_point = np.array(road_point)
-        x = road_point[:, 0]
-        x1 = road_pos[:, 1]
+        
+        
         road_point2 = np.array(road_point2)
         return road_point2
 
@@ -106,9 +105,20 @@ class RoadPCL(object):
 
     def road_callback(self,pcl,data):
 
-        cv_image = self._bridge.imgmsg_to_cv2(data,'bgr8')
-        points = np.fromstring(pcl.data, dtype=np.uint8).reshape([-1,3])
+        cv_image = self._bridge.imgmsg_to_cv2(data,'passthrough')
+        print("pcl_width = ", pcl.width)
+        print("pcl_height = ", pcl.height)
+        a = pcl.data
+        print(len(pcl.data))
+        point = []
+        for p in pc2.read_points(pcl, field_names = ("x", "y", "z"), skip_nans=True):
+            
+            point.append([p[0],p[1],p[2]])
+        #points = np.fromstring(pcl.data, dtype=np.uint8).reshape([-1,3])
 
+
+
+        points = np.array(point)
         print(type(points))
 
         print(points.shape)

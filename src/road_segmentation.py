@@ -3,29 +3,21 @@
 
 import rospy
 
-import cv2
 
 from sensor_msgs.msg import Image
 
 from cv_bridge import CvBridge, CvBridgeError
 
-import tensorflow as tf
 import time
 
 import os
-from io import BytesIO
-import tarfile
-import tempfile
-from six.moves import urllib
-
-from matplotlib import gridspec,cm
-from matplotlib import pyplot as plt
-
 import numpy as np
 import PIL
-#from PIL import Image
 
 from deeplab_model import DeepLabModel
+
+import cv2
+from matplotlib import pyplot as plt
 
 class RoadSegmentationNode(object):
 
@@ -68,20 +60,7 @@ class RoadSegmentationNode(object):
         original_im = original_im.crop((1000, 900, 3000, 1536))
         seg_map = self.model.run(original_im)
 
-        """
-        # image = apply_mask(resized_im, seg_map)
-        # seg_image = label_to_color_image(seg_map).astype(np.uint8)
-        # image =seg_image
-        # cv2.imshow('video',)
 
-        mask = np.zeros([len(seg_map), len(seg_map[0])])
-        mask = mask.astype('int8')
-        for i in range(len(seg_map)):
-            for j in range(len(seg_map[0])):
-                if seg_map[i][j] == 15:
-                    mask[i][j] = 255
-                # print(b)
-        """
         return original_im, seg_map
 
 
@@ -97,9 +76,26 @@ class RoadSegmentationNode(object):
         cv_image = self._bridge.imgmsg_to_cv2(data, 'bgr8')
 
         image, mask = self.run_visualization(cv_image)
+        time1 = time.time()
+        kernel = np.ones((5, 5), np.uint8)
+        local_instance_mask = np.array(mask) == 0
+        image = np.array(image,dtype='uint8')
 
-        """
-        
+
+        erosion = cv2.erode(local_instance_mask.astype('uint8'), kernel, iterations=1)
+        print("time_erosion", time.time() - time1)
+        res = cv2.bitwise_and(image,image, mask=erosion)
+        image2 = cv2.add(image,res)
+
+        print(time.time()-time1)
+        #plt.figure()
+        #plt.imshow(image2)
+        #plt.imshow(erosion,alpha=0.5)
+        #plt.show()
+
+
+
+        """ 
         dim = (480, 640)
         image = np.array(image)
         mask = np.array(mask, dtype='uint8')
@@ -113,8 +109,12 @@ class RoadSegmentationNode(object):
         # res_resized = cv2.resize(res,dim,interpolation = cv2.INTER_AREA)
         """
 
-        msg_im = self._bridge.cv2_to_imgmsg(np.array(image), encoding='passthrough')
-        mask_im = self._bridge.cv2_to_imgmsg(np.array(mask), encoding='passthrough')
+
+
+
+
+        msg_im = self._bridge.cv2_to_imgmsg(np.array(image2), encoding='passthrough')
+        mask_im = self._bridge.cv2_to_imgmsg(np.array(erosion), encoding='passthrough')
         # print('msg_im_type{}'.format(type(msg_im)))
         print(mask_im.header)
         self.pub.publish(msg_im)
@@ -125,7 +125,7 @@ class RoadSegmentationNode(object):
 
 def main():
     time1 = time.time()
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "3"
     MODEL = DeepLabModel(
         "/mrtstorage/users/chli/cityscapes/exp/train_on_train_set/train_fine/model/frozen_inference_graph.pb")
 

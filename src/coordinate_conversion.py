@@ -7,6 +7,7 @@ class Trans():
         self.P = np.reshape(self.P, [3, 4])
         self.R0 = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
         self.R0 = np.reshape(self.R0, [3, 3])
+        self.f_u = self.P[0, 0]
 
     def trans_matrix(self,rotation_quaternion,trans, points=[1,1,1]):
         T_qua2rota = RigidTransform(rotation_quaternion, points)

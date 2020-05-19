@@ -40,6 +40,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& cloud_msg)
             cloud1->push_back(point_cloud->points[i]);
 
         }
+
         //std::cout << cloud->points[i] << std::endl;
     }
     //std::cout<<cloud1->points.size()<< std::endl;

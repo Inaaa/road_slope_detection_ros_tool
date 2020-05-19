@@ -66,8 +66,10 @@ class RoadPCL(object):
         a =CarMakerTrans()
         pts_2d = a.project_lidar_to_image(pc_velo)
         pc_velo2 = a.project_lidar_to_vehicle(pc_velo)
-
-        fov_inds = (pc_velo[:, 0] > 0) & (pc_velo[:, 0] < 30)
+        print(labels.shape)
+        fov_inds = (pts_2d[:, 0] < 1200) & (pts_2d[:, 0] >= 0) & \
+                   (pts_2d[:, 1] < 800) & (pts_2d[:, 1] >= 0)
+        fov_inds = (pc_velo[:, 0] > 0) & (pc_velo[:, 0] < 40)
         imgfov_pc_velo = pc_velo[fov_inds, :]  # points in image
         imgfov_pc_velo2 = pc_velo2[fov_inds, :]
 

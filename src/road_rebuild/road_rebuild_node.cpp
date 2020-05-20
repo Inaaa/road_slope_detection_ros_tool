@@ -57,8 +57,6 @@ cloud_cb (const sensor_msgs::PointCloud2Ptr& cloud_msg)
     voxel_grid(cloud_filteredPtr2, cloud_filteredPtr3);
 
 
-
-
     // Convert to ROS data type
     sensor_msgs::PointCloud2 output;
     pcl_conversions::fromPCL(*cloud_filteredPtr3, output);
@@ -69,29 +67,20 @@ cloud_cb (const sensor_msgs::PointCloud2Ptr& cloud_msg)
     std::cout<<"publish successful"<<std::endl;
 }
 
-
-
-
-
 int main(int argc, char* argv[]) {
-    std::cout << "1" << std::endl;
-    ros::init(argc, argv, "road_rebuild_node");
-    std::cout << "2" << std::endl;
 
+    ros::init(argc, argv, "road_rebuild_node");
     //road_slope_detection_ros_tool::RoadRebuild road_rebuild(ros::NodeHandle("~"));
     ros::NodeHandle nh;
-    std::cout << "3" << std::endl;
 
     // Create a ROS subscriber for the input point cloud
     ros::Subscriber sub = nh.subscribe ("/road_pcl", 1, cloud_cb);
-    std::cout << "4" << std::endl;
 
 
     pub = nh.advertise<sensor_msgs::PointCloud2> ("/filter_points", 1);
-    std::cout << "5" << std::endl;
+
 
     std::cout<<"####################"<<std::endl;
-    std::cout << "6" << std::endl;
 
     ros::spin();
     std::cout << "7" << std::endl;

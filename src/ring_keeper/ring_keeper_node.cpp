@@ -21,8 +21,8 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& cloud_msg)
 
 
 
-    pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud1(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZI>::Ptr point_cloud(new pcl::PointCloud<pcl::PointXYZI>);
+    pcl::PointCloud<pcl::PointXYZI>::Ptr cloud1(new pcl::PointCloud<pcl::PointXYZI>);
     cloud1->header=point_cloud->header;
 
 
@@ -38,6 +38,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& cloud_msg)
         {
             if (point_cloud->points[i].y > -20 && point_cloud->points[i].y <20)
             cloud1->push_back(point_cloud->points[i]);
+
 
         }
 
@@ -63,9 +64,11 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& cloud_msg)
     lidarl_new.header.frame_id = point_cloud->header.frame_id;
     //lidarl_new.header.stamp.now() ;
     //std::cout<<lidarl_new.header << std::endl;
+    std::cout << lidarl_new.fields << std::endl;
 
     if (lidarl_new.width >20){
     std::cout <<"width"<< lidarl_new.width<<std::endl;
+    std::cout <<"cloud1-point[20]"<< cloud1->points[20] << std::endl;
     // Publish the data.
     pub.publish (lidarl_new);}
 

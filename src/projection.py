@@ -81,6 +81,7 @@ class RoadPCL(object):
 
                 points[i, 4] = 125
                 m=m+1
+        print("points", np.unique(points[:,4]))
 
         print("m=", m)
 
@@ -118,16 +119,20 @@ class RoadPCL(object):
     def road_callback(self,pcl,data):
 
         cv_image = self._bridge.imgmsg_to_cv2(data,'passthrough')
-        print("pcl_width = ", pcl.width)
-        print("pcl_height = ", pcl.height)
+        #print("pcl_width = ", pcl.width)
+        #print("pcl_height = ", pcl.height)
         a = pcl.data
-        print(len(pcl.data))
+        #print(len(pcl.data))
         point = []
-        for p in pc2.read_points(pcl, field_names = ("x", "y", "z"), skip_nans=True):
-            
+        point_rgb = []
+
+        for p in pc2.read_points(pcl, field_names = ("x", "y", "z","rgb"), skip_nans=True):
+            #print(p)
             point.append([p[0],p[1],p[2],0,0,0])
+            #point_rgb.append([p[0],p[1],p[2],p[3]])
         #points = np.fromstring(pcl.data, dtype=np.uint8).reshape([-1,3])
 
+        np.savetxt('/home/chli/CLionProjects/masterarbeit/data/temp/point_rgb.txt',point_rgb)
 
 
         points = np.array(point)
@@ -139,7 +144,7 @@ class RoadPCL(object):
         points_seg = self.pointcloudrgb_ge(points_seg)
         self.pub_points.publish(points_seg)
 
-        pcl=self.pointcloud_ge(road_points)
+        pcl=self.pointcloud_ge(road_points)  #road_points
         self.pub.publish(pcl)
         print('Good generate pcl')
 
@@ -160,21 +165,22 @@ class RoadPCL(object):
             z = pointcloud[i,2]
             r = 0
             g = pointcloud[i,4]
+            #print("g", g)
 
-            b = 0
+            b =0
             a = 255
-            #rgb = struct.unpack('I',struct.pack('BBBB',r,g,b,a))[0]
-            rgb = struct.unpack('f', struct.pack('i', 0xff0000))[0]
+            rgb = struct.unpack('I',struct.pack('BBBB',r,g,b,a))[0]
+            #rgb = struct.unpack('f', struct.pack('i', 0xff0000))[0]
             point =[x,y,z,rgb]
             points.append(point)
 
         print("type_points_seg", type(pointcloud))
+        np.savetxt('/home/chli/CLionProjects/masterarbeit/data/temp/1.txt',points)
 
         fields = [PointField('x', 0, PointField.FLOAT32, 1),
                   PointField('y', 4, PointField.FLOAT32, 1),
                   PointField('z', 8, PointField.FLOAT32, 1),
-                  PointField('rgb', 12, PointField.UINT32, 1),
-                  ]
+                  PointField('rgb', 12, PointField.UINT32, 1),]
 
         header =Header()
         header.frame_id = "vehicle"

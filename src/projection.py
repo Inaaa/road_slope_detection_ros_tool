@@ -65,8 +65,8 @@ class RoadPCL(object):
         """
         rospy.signal_shutdown("see you later")
 
-    def generate_disparity_from_velo(self,points ,labels):
-        pc_velo = points[:,:3]
+    def generate_disparity_from_velo(self,pc_velo ,labels):
+
         a =Trans()
         pts_2d = a.project_lidar_to_image(pc_velo)
         pc_velo2 = a.project_lidar_to_vehicle(pc_velo)
@@ -75,14 +75,6 @@ class RoadPCL(object):
         fov_inds = fov_inds & (pc_velo[:, 0] > 0) & (pc_velo[:, 0] < 30)
         imgfov_pc_velo = pc_velo[fov_inds, :]  # points in image
         imgfov_pc_velo2 = pc_velo2[fov_inds, :]
-        m =0
-        for i in range(len(fov_inds)):
-            if fov_inds[i]:
-
-                points[i, 4] = 125
-                m=m+1
-
-        print("m=", m)
 
         imgfov_pts_2d = pts_2d[fov_inds, :]
         x2 = imgfov_pc_velo[:, 0]
@@ -111,7 +103,7 @@ class RoadPCL(object):
         
         
         road_point2 = np.array(road_point2)
-        return road_point2, points
+        return road_point2,
 
 
 
@@ -125,7 +117,7 @@ class RoadPCL(object):
         point = []
         for p in pc2.read_points(pcl, field_names = ("x", "y", "z"), skip_nans=True):
             
-            point.append([p[0],p[1],p[2],0,0,0])
+            point.append([p[0],p[1],p[2]])
         #points = np.fromstring(pcl.data, dtype=np.uint8).reshape([-1,3])
 
 
@@ -134,55 +126,11 @@ class RoadPCL(object):
         print(type(points))
 
         print(points.shape)
-        road_points, points_seg = self.generate_disparity_from_velo(points,cv_image)
-
-        points_seg = self.pointcloudrgb_ge(points_seg)
-        self.pub_points.publish(points_seg)
+        road_points = self.generate_disparity_from_velo(points,cv_image)
 
         pcl=self.pointcloud_ge(road_points)
         self.pub.publish(pcl)
         print('Good generate pcl')
-
-
-    def pointcloudrgb_ge(self, points_seg):
-        '''
-        msg = masked rgb image
-        depth = depth image
-
-        '''
-        #convert massage to numpy array
-
-        pointcloud = points_seg
-        points =[]
-        for i in range(pointcloud.shape[0]):
-            x = pointcloud[i,0]
-            y = pointcloud[i,1]
-            z = pointcloud[i,2]
-            r = 0
-            g = pointcloud[i,4]
-
-            b = 0
-            a = 255
-            #rgb = struct.unpack('I',struct.pack('BBBB',r,g,b,a))[0]
-            rgb = struct.unpack('f', struct.pack('i', 0xff0000))[0]
-            point =[x,y,z,rgb]
-            points.append(point)
-
-        print("type_points_seg", type(pointcloud))
-
-        fields = [PointField('x', 0, PointField.FLOAT32, 1),
-                  PointField('y', 4, PointField.FLOAT32, 1),
-                  PointField('z', 8, PointField.FLOAT32, 1),
-                  PointField('rgb', 12, PointField.UINT32, 1),
-                  ]
-
-        header =Header()
-        header.frame_id = "vehicle"
-
-        point_generate = point_cloud2.create_cloud(header, fields, points)
-        point_generate.header.stamp = rospy.Time.now()
-
-        return point_generate
 
 
     def pointcloud_ge(self, road_points):

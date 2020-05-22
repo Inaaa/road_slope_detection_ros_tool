@@ -61,7 +61,7 @@ cloud_cb (const sensor_msgs::PointCloud2Ptr& cloud_msg)
 
     // Convert to ROS data type
     sensor_msgs::PointCloud2 output;
-    pcl_conversions::fromPCL(*cloud_filteredPtr3, output);
+    pcl_conversions::fromPCL(*cloud_filteredPtr2, output);
 
 
     // Publish the data
@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
     std::cout << "3" << std::endl;
 
     // Create a ROS subscriber for the input point cloud
-    ros::Subscriber sub = nh.subscribe ("/road_pcl", 1, cloud_cb);
+    ros::Subscriber sub = nh.subscribe ("/road_pointcloud", 1, cloud_cb);
     std::cout << "4" << std::endl;
 
 
@@ -146,8 +146,8 @@ void passthrough(pcl::PCLPointCloud2Ptr cloud,
 {
     pcl::PassThrough<pcl::PCLPointCloud2> pass;
     pass.setInputCloud (cloud);
-    pass.setFilterFieldName ("z");
-    pass.setFilterLimits (-0.3, 0.3);
+    pass.setFilterFieldName ("y");
+    pass.setFilterLimits (0, 50);
     //pass.setFilterLimitsNegative (true);
     pass.filter (*cloud_filtered);
 

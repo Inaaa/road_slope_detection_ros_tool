@@ -87,7 +87,7 @@ class Trans():
         result = pts_2d[:, 0:2]
         return result
 
-    def project_camera_to_image(self, pts_3d_ref):
+    def project_camera_to_image2(self, pts_3d_ref):
         pts_3d_rect = np.transpose(np.dot(self.R0, np.transpose(pts_3d_ref)))
         pts_3d = pts_3d_rect
 
@@ -97,13 +97,25 @@ class Trans():
         pts_3d_rect = pts_3d_hom
 
         #print("self.p = \n", self.P)
-
         pts_2d = np.dot(pts_3d_rect, np.transpose(self.P))  # nx3
+
         pts_2d[:, 0] /= pts_2d[:, 2]
         pts_2d[:, 1] /= pts_2d[:, 2]
         result = pts_2d[:, 0:2]
         return result
 
+
+    def project_camera_to_image(self, pts_3d):
+
+        n = pts_3d.shape[0]
+        pts_4d = np.hstack((pts_3d, np.ones((n, 1))))
+        #print("self.p = \n", self.P)
+        pts_2d = np.transpose(np.dot(self.P, np.transpose(pts_4d)) ) # nx3
+
+        pts_2d[:, 0] /= pts_2d[:, 2]
+        pts_2d[:, 1] /= pts_2d[:, 2]
+        result = pts_2d[:, 0:2]
+        return result
 
 
 

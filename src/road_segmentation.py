@@ -23,6 +23,7 @@ import tf2_py as tf2
 
 import message_filters
 from tftransform import TransformPointCloud
+import time
 
 class RoadSegmentationNode(object):
 
@@ -44,7 +45,7 @@ class RoadSegmentationNode(object):
 
         # Advertise the result
         #self.pub_array = rospy.Publisher('/road_detection_array', DetectionArray , queue_size=1)
-        self.pub_points = rospy.Publisher("point_cloud_transformed", PointCloud2)
+        self.pub_points = rospy.Publisher("road_pointcloud", PointCloud2)
         self.pub = rospy.Publisher('/road_detection', Image , queue_size=1)
         self.pub_mask = rospy.Publisher('road_mask', Image , queue_size=1)
         #self.pub = rospy.Publisher('people_detection', Image , queue_size=2)

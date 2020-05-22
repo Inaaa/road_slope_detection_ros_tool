@@ -87,7 +87,7 @@ class Trans():
         result = pts_2d[:, 0:2]
         return result
 
-    def project_camera_to_image(self, pts_3d_ref)
+    def project_camera_to_image(self, pts_3d_ref):
         pts_3d_rect = np.transpose(np.dot(self.R0, np.transpose(pts_3d_ref)))
         pts_3d = pts_3d_rect
 

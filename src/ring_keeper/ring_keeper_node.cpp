@@ -38,24 +38,12 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& cloud_msg)
         {
             if (point_cloud->points[i].y > -20 && point_cloud->points[i].y <20)
             cloud1->push_back(point_cloud->points[i]);
-
         }
 
-        //std::cout << cloud->points[i] << std::endl;
     }
-    //std::cout<<cloud1->points.size()<< std::endl;
-    //std::cout <<"cloud1-point[20]"<< cloud1->points[20] << std::endl;
-    /*
-    pcl::PCLPointCloud2 cloud_new;
-    pcl::toPCLPointCloud2(*cloud1, cloud_new);
 
 
-    // Convert to ROS data type
-    sensor_msgs::PointCloud2 lidarl_new;
 
-    pcl_conversions::fromPCL(cloud_new, lidarl_new);
-
-    */
     sensor_msgs::PointCloud2 lidarl_new;
 
     pcl::toROSMsg(*cloud1,lidarl_new);

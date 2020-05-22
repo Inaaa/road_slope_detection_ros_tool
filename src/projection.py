@@ -152,7 +152,7 @@ class RoadPCL(object):
         header =Header()
         header.frame_id = "vehicle"
 
-        point_generate = point_cloud2.create_cloud(header, fields, pointcloud)
+        point_generate = pc2.create_cloud(header, fields, pointcloud)
         point_generate.header.stamp = rospy.Time.now()
 
         return point_generate

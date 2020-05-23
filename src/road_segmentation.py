@@ -75,14 +75,14 @@ class RoadSegmentationNode(object):
         #original_im = PIL.Image.fromarray(frame)
         #original_im = original_im.crop((1000, 900, 3000, 1536))
 
-        original_im2 = frame[936:1536,1000:3000,:]
+        original_im2 = frame[936:1536,500:3500,:]
 
-        res = cv2.resize(original_im2,dsize=(513,192),interpolation=cv2.INTER_CUBIC)
+        res = cv2.resize(original_im2,dsize=(513,102),interpolation=cv2.INTER_CUBIC)
 
         seg_map = self.model.run(res)
         seg_map = np.array(seg_map,dtype='uint8')
 
-        seg_map2 = cv2.resize(seg_map,(2000,600),interpolation = cv2.INTER_AREA) #2000,600   4096,1536
+        seg_map2 = cv2.resize(seg_map,(3000,600),interpolation = cv2.INTER_AREA) #2000,600   4096,1536
         #image_resize =np.resize(seg_map,[600,2000])
         #plt.figure()
         #plt.imshow(seg_map2)

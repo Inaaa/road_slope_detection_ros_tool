@@ -204,8 +204,8 @@ static bool meshToMarkerMsg(const pcl::PolygonMesh& in, visualization_msgs::Mark
     marker.type = visualization_msgs::Marker::TRIANGLE_LIST;
     //std::cout<<in.cloud.header.frame_id <<std::endl;
     //marker.header.frame_id = in.cloud.header.frame_id;
-    marker.header.frame_id = "sensor/lidar/velodyne/fl";
-    //marker.header.frame_id = "front_color_rect";
+    //marker.header.frame_id = "sensor/lidar/velodyne/fl";
+    marker.header.frame_id = "front_color_rect";
     std::cout<< "id" << marker.header.frame_id << std::endl;
     marker.header.stamp = ros::Time::now();
     marker.color.r = 1.0;

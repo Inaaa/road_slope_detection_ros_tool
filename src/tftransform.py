@@ -83,8 +83,8 @@ class TransformPointCloud(object):
         a = Trans()
         pts_2d = a.project_camera_to_image(pc_velo)
         #pts_2d = a.project_lidar_to_image(pc_velo)
-        fov_inds = (pts_2d[:, 0] < 3000 - 1) & (pts_2d[:, 0] >= 1000) & \
-                   (pts_2d[:, 1] < 2400 - 1) & (pts_2d[:, 1] >= 900)
+        fov_inds = (pts_2d[:, 0] < 3500 - 1) & (pts_2d[:, 0] >= 500) & \
+                   (pts_2d[:, 1] < 1536 - 1) & (pts_2d[:, 1] >= 936)
         #fov_inds = fov_inds & (pc_velo[:, 0] > 0) & (pc_velo[:, 0] < 30)
         fov_inds = fov_inds
         imgfov_pc_velo = pc_velo[fov_inds, :]  # points in image
@@ -100,12 +100,12 @@ class TransformPointCloud(object):
 
         print("i max = ", imgfov_pts_2d.shape[0])
         for i in range(imgfov_pts_2d.shape[0]):
-            if int(imgfov_pts_2d[i, 1]) < 1500:
-                if labels[int(imgfov_pts_2d[i, 1] - 900), int(imgfov_pts_2d[i, 0] - 1000)] == 1:
+            if int(imgfov_pts_2d[i, 1]) < 1536:
+                if labels[int(imgfov_pts_2d[i, 1] - 936), int(imgfov_pts_2d[i, 0] - 500)] == 1:
                     road_point.append(imgfov_pc_velo[i, :])
 
             else:
-                if labels[589, int(imgfov_pts_2d[i, 0] - 1000)] == 1:
+                if labels[589, int(imgfov_pts_2d[i, 0] - 500)] == 1:
                     road_point.append(imgfov_pc_velo[i, :])
 
 

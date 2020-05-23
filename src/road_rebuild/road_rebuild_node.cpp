@@ -146,7 +146,7 @@ void passthrough(pcl::PCLPointCloud2Ptr cloud,
 {
     pcl::PassThrough<pcl::PCLPointCloud2> pass;
     pass.setInputCloud (cloud);
-    pass.setFilterFieldName ("x");
+    pass.setFilterFieldName ("y");
     pass.setFilterLimits (0, 50);
     //pass.setFilterLimitsNegative (true);
     pass.filter (*cloud_filtered);

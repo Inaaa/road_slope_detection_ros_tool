@@ -47,8 +47,12 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& cloud_msg)
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud1(new pcl::PointCloud<pcl::PointXYZ>);
-
-    pcl::fromPCLPointCloud2( *cloud, *point_cloud);
+    if (cloud->width != 0) {
+        pcl::fromPCLPointCloud2(*cloud, *point_cloud);
+    }
+    else {
+        std::cout << "Cloud is empty" << std::endl;
+    }
     std::cout<<"poincloud"<<point_cloud->points.size()<< std::endl;
     //float gradient = slope(point_cloud);
     //std::cout << "gradient" << gradient << std::endl;
@@ -117,7 +121,7 @@ float slope(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
     sor.getMinBoxCoordinates();
     sor.filter (*cloud_filtered2);
 
-    int size = cloud_filtered2->size();
+    int size = cloud_filtered2->points.size();
     float slope=0;
     if (size >=2)
     {

@@ -49,10 +49,8 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& cloud_msg)
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud1(new pcl::PointCloud<pcl::PointXYZ>);
     if (cloud->width != 0) {
         pcl::fromPCLPointCloud2(*cloud, *point_cloud);
-    }
-    else {
-        std::cout << "Cloud is empty" << std::endl;
-    }
+
+
     std::cout<<"poincloud"<<point_cloud->points.size()<< std::endl;
     //float gradient = slope(point_cloud);
     //std::cout << "gradient" << gradient << std::endl;
@@ -79,7 +77,7 @@ cloud_cb (const sensor_msgs::PointCloud2ConstPtr& cloud_msg)
     // Publish the data
     pub.publish (marker);
     std::cout<<"publish successful"<<std::endl;
-
+    }
 }
 
 int main(int argc, char* argv[]) {
@@ -206,8 +204,8 @@ static bool meshToMarkerMsg(const pcl::PolygonMesh& in, visualization_msgs::Mark
     marker.type = visualization_msgs::Marker::TRIANGLE_LIST;
     //std::cout<<in.cloud.header.frame_id <<std::endl;
     //marker.header.frame_id = in.cloud.header.frame_id;
-    //marker.header.frame_id = "sensor/lidar/velodyne/fl";
-    marker.header.frame_id = "front_color_rect";
+    marker.header.frame_id = "sensor/lidar/velodyne/fl";
+    //marker.header.frame_id = "front_color_rect";
     std::cout<< "id" << marker.header.frame_id << std::endl;
     marker.header.stamp = ros::Time::now();
     marker.color.r = 1.0;

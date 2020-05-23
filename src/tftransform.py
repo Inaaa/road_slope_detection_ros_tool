@@ -31,7 +31,7 @@ class TransformPointCloud(object):
         self.tf_buffer = tf2_ros.Buffer(cache_time=rospy.Duration(10))
         self.tl = tf2_ros.TransformListener(self.tf_buffer)
         self.target_frame =  'front_color_rect'
-
+        self.count=0
 
         '''
         rospy.init_node('transform_point_cloud')
@@ -82,13 +82,13 @@ class TransformPointCloud(object):
 
         a = Trans()
         pts_2d = a.project_camera_to_image(pc_velo)
-        pc_velo2 = a.project_lidar_to_vehicle(pc_velo)
+        #pts_2d = a.project_lidar_to_image(pc_velo)
         fov_inds = (pts_2d[:, 0] < 3000 - 1) & (pts_2d[:, 0] >= 1000) & \
                    (pts_2d[:, 1] < 2400 - 1) & (pts_2d[:, 1] >= 900)
         #fov_inds = fov_inds & (pc_velo[:, 0] > 0) & (pc_velo[:, 0] < 30)
         fov_inds = fov_inds
         imgfov_pc_velo = pc_velo[fov_inds, :]  # points in image
-        imgfov_pc_velo2 = pc_velo2[fov_inds, :]
+
 
         imgfov_pts_2d = pts_2d[fov_inds, :]
         x2 = imgfov_pc_velo[:, 0]
@@ -96,24 +96,25 @@ class TransformPointCloud(object):
         imgfov_pts_2d = np.round(imgfov_pts_2d).astype(int)  # segmented position in image.(pixel)
         road_point = []
 
-        road_point2 = []
+
 
         print("i max = ", imgfov_pts_2d.shape[0])
         for i in range(imgfov_pts_2d.shape[0]):
             if int(imgfov_pts_2d[i, 1]) < 1500:
                 if labels[int(imgfov_pts_2d[i, 1] - 900), int(imgfov_pts_2d[i, 0] - 1000)] == 1:
                     road_point.append(imgfov_pc_velo[i, :])
-                    road_point2.append(imgfov_pc_velo2[i, :3])
 
             else:
                 if labels[589, int(imgfov_pts_2d[i, 0] - 1000)] == 1:
                     road_point.append(imgfov_pc_velo[i, :])
-                    road_point2.append(imgfov_pc_velo2[i, :3])
+
 
         road_point = np.array(road_point)
 
-        road_point2 = np.array(road_point2)
         return road_point
+
+
+
 
     def point_cloud_callback(self, msg, data):
         """
@@ -125,38 +126,53 @@ class TransformPointCloud(object):
 
 
         # tramform from lidar tp camera
-        print("!!!!!!*******+")
+        timea = time.time()
+        #print("!!!!!!*******+")
         lookup_time = msg.header.stamp + rospy.Duration(10)
         target_frame = self.target_frame
         source_frame = msg.header.frame_id
-        try:
-            trans = self.tf_buffer.lookup_transform(target_frame, source_frame, lookup_time,
-                                                    rospy.Duration(10))
-        except tf2.LookupException as ex:
-            rospy.logwarn(str(lookup_time.to_sec()))
-            rospy.logwarn(ex)
-            return
-        except tf2.ExtrapolationException as ex:
-            rospy.logwarn(str(lookup_time.to_sec()))
-            rospy.logwarn(ex)
-            return
-        cloud_out = do_transform_cloud(msg, trans)
+
+        if  self.count==0:
+            try:
+                self.trans = self.tf_buffer.lookup_transform(target_frame, source_frame, rospy.Time(),
+                                                        rospy.Duration(10)) #lookup_time,
+                print(self.trans.transform.translation)
+                print(self.trans.transform.rotation)
+            except tf2.LookupException as ex:
+                rospy.logwarn(str(lookup_time.to_sec()))
+                rospy.logwarn(ex)
+                return
+            except tf2.ExtrapolationException as ex:
+                rospy.logwarn(str(lookup_time.to_sec()))
+                rospy.logwarn(ex)
+                return
+            self.count +=1
+
+        timeb = time.time()
+
+        cloud_out = do_transform_cloud(msg, self.trans)
         print("!!!!!!!!*****")
+        print("time in lookup = ",timeb-timea )
 
         #  tranform from camre to image
+        #time0 = time.time()
 
-        point = []
-        for p in pc2.read_points(cloud_out, field_names = ("x", "y", "z"), skip_nans=True):
+        point = list(pc2.read_points(cloud_out,field_names = ("x", "y", "z"), skip_nans=True))
 
-            point.append([p[0],p[1],p[2]])
+        #time1 = time.time()
 
-
+        #print("time append",time1-time0)
         points = np.array(point)
 
         cloud_segment = self.segment_pointcloud(points,data)
-        print("generate filter points1111111111")
+        time2 = time.time()
+        #print("coordinate translate",time2-time1)
+
+
+        #print("generate filter points1111111111")
 
         cloud_seg=self.pointcloud_ge(cloud_segment)
+        #print("coordinate translate",time.time()-time2)
 
         print("generate filter points")
         return cloud_seg
@@ -178,6 +194,7 @@ class TransformPointCloud(object):
                   ]
 
         header = Header()
+        #header.frame_id = 'sensor/lidar/velodyne/fl'
         header.frame_id = 'front_color_rect'
 
         point_generate = pc2.create_cloud(header, fields, pointcloud)

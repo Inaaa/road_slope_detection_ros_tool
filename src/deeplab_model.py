@@ -55,26 +55,26 @@ class DeepLabModel(object):
     #width, height = image.size
     #resize_ratio = 1.0 * self.INPUT_SIZE / max(width, height)
     #target_size = (int(resize_ratio * width), int(resize_ratio * height))
-    resized_image = image.convert('RGB').resize((500,150), Image.ANTIALIAS)
+    #resized_image = image.convert('RGB').resize((500,150), Image.ANTIALIAS)
     #print('resized_image = {}'.format(resized_image.size))
 
-    time5 =time.time()
+    #time5 =time.time()
     batch_seg_map = self.sess.run(
-    self.OUTPUT_TENSOR_NAME, feed_dict={self.INPUT_TENSOR_NAME: [np.asarray(resized_image)]})
-    time6 =time.time()
-    print('time of session {}'.format(time6-time5))
+    self.OUTPUT_TENSOR_NAME, feed_dict={self.INPUT_TENSOR_NAME: [np.asarray(image)]})
+    #time6 =time.time()
+    #print('time of session {}'.format(time6-time5))
 
     seg_map = batch_seg_map[0]
     #resized_seg_map = np.resize(seg_map, (600, 2000))
     #print(type(seg_map))
 
-    im = Image.fromarray(np.uint8(seg_map))
-    resized_seg_map = im.resize((2000,636), Image.ANTIALIAS)
+    #im = Image.fromarray(np.uint8(seg_map))
+    #resized_seg_map = im.resize((2000,636), Image.ANTIALIAS)
     #print(resized_seg_map.size)
     #self.road(image,resized_seg_map)
 
 
-    return resized_seg_map
+    return seg_map
   def road(self,image, seg_map):
 
     # get the mask only for person

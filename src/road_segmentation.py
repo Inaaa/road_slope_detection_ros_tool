@@ -55,14 +55,16 @@ class RoadSegmentationNode(object):
         self.frame = message_filters.Subscriber('/sensor/camera/rect/color_front/left/image', Image)
 
         self.sub = message_filters.Subscriber('/preproc/lidar/velodyne/fl/cartesian/points', PointCloud2)
+        self.count = 0
 
         ts = message_filters.ApproximateTimeSynchronizer( \
             [self.sub, self.frame], \
             200, \
             50)
-        print("'''''''''''''#'#######")
+        #print("'''''''''''''#'#######")
         ts.registerCallback(self.road_detection_callback)
-        print("222222222222'''''''''''''#'#######")
+        self.pp = TransformPointCloud()
+        print("start!!!!!!!!!!!")
 
 
 
@@ -70,15 +72,24 @@ class RoadSegmentationNode(object):
     def run_visualization(self,frame):
         """Inferences DeepLab model and visualizes result."""
 
+        #original_im = PIL.Image.fromarray(frame)
+        #original_im = original_im.crop((1000, 900, 3000, 1536))
+
+        original_im2 = frame[936:1536,1000:3000,:]
+
+        res = cv2.resize(original_im2,dsize=(513,192),interpolation=cv2.INTER_CUBIC)
+
+        seg_map = self.model.run(res)
+        seg_map = np.array(seg_map,dtype='uint8')
+
+        seg_map2 = cv2.resize(seg_map,(2000,600),interpolation = cv2.INTER_AREA) #2000,600   4096,1536
+        #image_resize =np.resize(seg_map,[600,2000])
+        #plt.figure()
+        #plt.imshow(seg_map2)
+        #plt.show()
 
 
-
-        original_im = PIL.Image.fromarray(frame)
-        original_im = original_im.crop((1000, 900, 3000, 1536))
-        seg_map = self.model.run(original_im)
-
-
-        return original_im, seg_map
+        return original_im2, seg_map2
 
 
     def shutdown(self):
@@ -99,31 +110,33 @@ class RoadSegmentationNode(object):
 
 
         # get the result of image segmentation , output image and erosion(mask)
-        print("!!!!!!!!!!!here")
-        print(data.header)
+        time0 = time.time()
         cv_image = self._bridge.imgmsg_to_cv2(data, 'bgr8')
 
         image, mask = self.run_visualization(cv_image)
-        time1 = time.time()
+
+
+        #print("time in segmentation", time1 - time0)
+
         kernel = np.ones((5, 5), np.uint8)
         local_instance_mask = np.array(mask) == 0
-        image = np.array(image,dtype='uint8')
+        #image = np.array(image,dtype='uint8')
 
 
         erosion = cv2.erode(local_instance_mask.astype('uint8'), kernel, iterations=1)
-        print("time_erosion", time.time() - time1)
-        res = cv2.bitwise_and(image,image, mask=erosion)
-        image2 = cv2.add(image,res)
-
-        print(time.time()-time1)
-
-        pp = TransformPointCloud()
-        point_seg = pp.point_cloud_callback(msg,erosion)
+        #print("time_erosion", time.time() - time1)
+        #res = cv2.bitwise_and(image,image, mask=erosion)
+        #image2 = cv2.add(image,res)
 
 
+        time1 = time.time()
 
-        msg_im = self._bridge.cv2_to_imgmsg(np.array(image2), encoding='passthrough')
-        mask_im = self._bridge.cv2_to_imgmsg(np.array(erosion), encoding='passthrough')
+        point_seg = self.pp.point_cloud_callback(msg,erosion)
+
+        print("time in generate",time.time()-time0)
+
+        #msg_im = self._bridge.cv2_to_imgmsg(np.array(image2), encoding='passthrough')
+        #mask_im = self._bridge.cv2_to_imgmsg(np.array(erosion), encoding='passthrough')
 
 
         # print('msg_im_type{}'.format(type(msg_im)))

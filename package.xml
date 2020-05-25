@@ -45,6 +45,10 @@
   <depend>dynamic_reconfigure</depend>
   <depend>message_filters</depend>
   <depend>tf2_ros</depend>
+  <depend>lanelet2_core</depend>
+  <depend>lanelet2_io</depend>
+  <depend>lanelet2_projection</depend>
+  <depend>automated_driving_msgs</depend>
   <export>
     <nodelet plugin="${prefix}/nodelet_plugins.xml" /><!-- Other tools can request additional information be placed here -->
   </export>

@@ -54,8 +54,8 @@ cloud_cb (const sensor_msgs::PointCloud2Ptr& cloud_msg)
     // filter pointcloud
     radius_filter(cloudPtr, cloud_filteredPtr);
     passthrough(cloud_filteredPtr, cloud_filteredPtr2);
-    voxel_grid(cloud_filteredPtr2, cloud_filteredPtr3);
-
+    road_slope_detection_ros_tool::voxel_grid(cloud_filteredPtr2, cloud_filteredPtr3);
+    
 
 
 

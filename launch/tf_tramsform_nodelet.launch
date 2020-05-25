@@ -1,0 +1,21 @@
+<launch>
+
+    <arg name="config" default="$(find road_slope_detection_ros_tool)/launch/params/tf_tramsform_parameters.yaml"/>
+    <arg name="required" default="false"/>
+    <arg name="node_name" default="tf_tramsform"/>
+    <arg name="nodelet_manager_name" default="nodelet_manager_tf_tramsform" doc="Name of nodelet manager. If it was already started the INCLUDING its namespace"/>
+    <arg name="start_nodelet_manager" default="true"/>
+
+    <!-- Nodelet manager (if enabled) -->
+    <arg name="manager_name" value="/sensor/$(arg nodelet_manager_name)" if="$(arg start_nodelet_manager)"/>
+    <arg name="manager_name" value="$(arg nodelet_manager_name)" unless="$(arg start_nodelet_manager)"/>
+    <node pkg="nodelet" type="nodelet" name="$(arg nodelet_manager_name)" args="manager" output="screen" ns="/sensor"
+          if="$(arg start_nodelet_manager)"/>
+
+    <!-- TfTramsform -->
+    <node pkg="nodelet" type="nodelet" name="$(arg node_name)" ns="/sensor"
+          args="load road_slope_detection_ros_tool/TfTramsformNodelet $(arg nodelet_manager_name)" output="screen" required="$(arg required)">
+        <rosparam command="load" file="$(arg config)"/>
+    </node>
+
+</launch>

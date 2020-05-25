@@ -1,0 +1,7 @@
+<launch>
+    <test test-name="tf_tramsform_nodelet_test" pkg="road_slope_detection_ros_tool" type="tf_tramsform_nodelet-test" time-limit="60.0"/>
+    <include file="$(find road_slope_detection_ros_tool)/launch/tf_tramsform_nodelet.launch">
+        <arg name="required" value="true"/>
+    </include>
+</launch>
+

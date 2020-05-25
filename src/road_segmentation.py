@@ -151,7 +151,7 @@ class RoadSegmentationNode(object):
 
 def main():
     time1 = time.time()
-    os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "1"
     MODEL = DeepLabModel(
         "/mrtstorage/users/chli/cityscapes/exp/train_on_train_set/train_fine/model/frozen_inference_graph.pb")
 

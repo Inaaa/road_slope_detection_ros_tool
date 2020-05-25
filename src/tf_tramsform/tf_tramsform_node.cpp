@@ -18,7 +18,7 @@ void cloud_cb(const automated_driving_msgs::MotionState& motionState)
 
     using namespace lanelet;
 
-    std::string exampleMapPath = "./ludwigsburg_large.osm";
+    std::string exampleMapPath = "/home/chli/my_first_ws/src/road_slope_detection_ros_tool/src/tf_tramsform/ludwigsburg_large.osm";
 
     lanelet::Origin origin{{49.01439, 8.41722, 0.}}; //地图起点
 
@@ -36,32 +36,33 @@ void cloud_cb(const automated_driving_msgs::MotionState& motionState)
             geometry::findNearest(map->laneletLayer, BasicPoint2d(motionState.pose.pose.position.x, motionState.pose.pose.position.y), 5);  // 应该给入真实的地址
     assert(!actuallyNearestLanelets.empty());
 
+
+    std::vector<lanelet::BasicPoint3d> points;
     for (int j =0; j<5; j++)
     {
-        // 将找出的lanelet的左边界存入vector points_left中
         int n = actuallyNearestLanelets[j].second.leftBound3d().size();
-        std::vector<lanelet::BasicPoint3d> points_left;
+        //std::vector<lanelet::BasicPoint3d> points_left;
         for (int i=0;i<n;i++)
         {
             auto point_l = actuallyNearestLanelets[j].second.leftBound3d()[i];
-
-            std::cout << i <<"HIER!!!!!"<<std::endl;
-            points_left.push_back(point_l);
-            std::cout <<  points_left[i] << std::endl;
+            points.push_back(point_l);
+            //std::cout <<  points_left[i] << std::endl;
             //outFile << points_left[i].x()<<" "<< points_left[i].y() <<" " << points_left[i].z()<<"\n";
         }
         int n1 = actuallyNearestLanelets[j].second.rightBound3d().size();
-        std::vector<lanelet::BasicPoint3d> points_right;
+        //std::vector<lanelet::BasicPoint3d> points_right;
 
         for (int i=0;i<n1;i++)
         {
             auto point_r = actuallyNearestLanelets[j].second.rightBound3d()[i];
-            //std::cout << i <<std::endl;
-            points_right.push_back(point_r);
-            std::cout <<  points_right[i] << std::endl;
+            points.push_back(point_r);
+            //std::cout <<  points_right[i] << std::endl;
             //outFile_r << points_right[i].x()<<" "<< points_right[i].y() <<" " << points_right[i].z()<<"\n";
         }
     }
+
+
+
 
 
 }

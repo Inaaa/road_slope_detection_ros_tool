@@ -568,7 +568,7 @@ CustomVoxelGrid::applyFilter (PCLPointCloud2 &output)
     }
     else
     {
-	  PCL_ERROR("Unsupported operation", "CustomVoxelGrid");
+	  //PCL_ERROR("Unsupported operation", "CustomVoxelGrid");
       // ---[ RGB special case
       // fill extra r/g/b centroid field
       if (rgba_index >= 0)
@@ -590,14 +590,14 @@ CustomVoxelGrid::applyFilter (PCLPointCloud2 &output)
         memcpy (&pt[2], &input_->data[point_offset+input_->fields[z_idx_].offset], sizeof (float));
 	if (pt[1] < centroid[1])
 	{
-          centroid[0] = pt[0];
+      centroid[0] = pt[0];
 	  centroid[1] = pt[1];
 	  centroid[2] = pt[2];
 	}
       }
       else
       {
-	  PCL_ERROR("Unsupported operation", "CustomVoxelGrid");
+	  //PCL_ERROR("Unsupported operation", "CustomVoxelGrid");
         // ---[ RGB special case
         // fill extra r/g/b centroid field
         if (rgba_index >= 0)
@@ -629,7 +629,7 @@ CustomVoxelGrid::applyFilter (PCLPointCloud2 &output)
     }
     else
     {
-	  PCL_ERROR("Unsupported operation", "CustomVoxelGrid");
+	  //PCL_ERROR("Unsupported operation", "CustomVoxelGrid");
       std::size_t point_offset = index * output.point_step;
       // Copy all the fields
       for (std::size_t d = 0; d < output.fields.size (); ++d)

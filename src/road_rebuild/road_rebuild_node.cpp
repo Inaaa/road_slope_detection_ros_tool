@@ -61,7 +61,7 @@ cloud_cb (const sensor_msgs::PointCloud2Ptr& cloud_msg)
 
     // Convert to ROS data type
     sensor_msgs::PointCloud2 output;
-    pcl_conversions::fromPCL(*cloud_filteredPtr2, output);
+    pcl_conversions::fromPCL(*cloud_filteredPtr3, output);
 
 
     // Publish the data

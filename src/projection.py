@@ -35,13 +35,13 @@ class RoadPCL(object):
         self._bridge = CvBridge()
 
         # Subscribe the mask_image, depth_image und rgb_image
-        sub_pcl = message_filters.Subscriber('/lidarl_new', PointCloud2)
+        sub_pcl = message_filters.Subscriber('/lidar', PointCloud2)
         sub_mask = message_filters.Subscriber('FL_front_color/image_raw', Image)
         #print('sub_pcl{}'.format(sub_pcl))
 
         # Advertise the result
 
-        self.pub = rospy.Publisher('road_pcl', PointCloud2, queue_size=1)
+        self.pub = rospy.Publisher('road_pointcloud', PointCloud2, queue_size=1)
 
 
         # Create the message filter

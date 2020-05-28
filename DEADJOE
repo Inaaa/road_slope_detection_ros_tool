@@ -1,0 +1,41 @@
+
+*** These modified files were found in JOE when it aborted on Sat May 16 14:13:57 2020
+*** JOE was aborted because the terminal closed
+
+*** File '/home/chli/my_first_ws/src/road_slope_detection_ros_tool/.git/COMMIT_EDITMSG'
+initq
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch carmaker
+# Changes to be committed:
+#	modified:   .idea/misc.xml
+#	modified:   .idea/workspace.xml
+#	deleted:    cmake-build-debug/atomic_configure/_setup_util.py
+#	deleted:    cmake-build-debug/catkin_generated/generate_cached_setup.py
+#	deleted:    cmake-build-debug/catkin_generated/installspace/_setup_util.py
+#	deleted:    cmake-build-debug/devel/_setup_util.py
+#	deleted:    cmake-build-debug/devel/lib/python2.7/dist-packages/road_slope_detection_ros_tool/__init__.py
+#	deleted:    cmake-build-debug/devel/lib/python2.7/dist-packages/road_slope_detection_ros_tool/cfg/RingKeeperConfig.py
+#	deleted:    cmake-build-debug/devel/lib/python2.7/dist-packages/road_slope_detection_ros_tool/cfg/RoadRebuildConfig.py
+#	deleted:    cmake-build-debug/devel/lib/python2.7/dist-packages/road_slope_detection_ros_tool/cfg/SurfaceConfig.py
+#	deleted:    cmake-build-debug/devel/lib/python2.7/dist-packages/road_slope_detection_ros_tool/cfg/__init__.py
+#	deleted:    cmake-build-debug/devel/lib/python2.7/dist-packages/road_slope_detection_ros_tool/interface/RingKeeperInterface.py
+#	deleted:    cmake-build-debug/devel/lib/python2.7/dist-packages/road_slope_detection_ros_tool/interface/RoadRebuildInterface.py
+#	deleted:    cmake-build-debug/devel/lib/python2.7/dist-packages/road_slope_detection_ros_tool/interface/SurfaceInterface.py
+#	deleted:    cmake-build-debug/devel/lib/python2.7/dist-packages/road_slope_detection_ros_tool/interface/__init__.py
+#
+# Untracked files:
+#	.idea/vcs.xml
+#	cmake-build-debug/
+#
+
+*** File '(Unnamed)'
+/home/chli/Documents/hiwi/Pricing_strategie/.git/COMMIT_EDITMSG
+/home/chli/my_first_ws/src/road_slope_detection_ros_tool/.git/COMMIT_EDITMSG
+
+*** File '* Startup Log *'
+Processing '/etc/joe/editorrc'...
+Processing '/etc/joe/ftyperc'...
+Finished processing /etc/joe/ftyperc
+Finished processing /etc/joe/editorrc

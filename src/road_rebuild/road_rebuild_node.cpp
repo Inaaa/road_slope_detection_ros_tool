@@ -32,8 +32,8 @@ ros::Publisher pub;
 void radius_filter(pcl::PCLPointCloud2Ptr cloud,
                    pcl::PCLPointCloud2Ptr cloud_filtered);
 
-void voxel_grid (pcl::PCLPointCloud2Ptr cloudPtr,
-                 pcl::PCLPointCloud2Ptr cloud_filteredPtr);
+//void voxel_grid (pcl::PCLPointCloud2Ptr cloudPtr,
+                 //pcl::PCLPointCloud2Ptr cloud_filteredPtr);
 void passthrough(pcl::PCLPointCloud2Ptr cloud,
                  pcl::PCLPointCloud2Ptr cloud_filtered);
 
@@ -41,6 +41,7 @@ void
 cloud_cb (const sensor_msgs::PointCloud2Ptr& cloud_msg)
 {
     // Container for original & filtered data
+    std::cout<<"here!!!!!!!!!!!!!" << std::endl;
     pcl::PCLPointCloud2* cloud = new pcl::PCLPointCloud2;
     pcl::PCLPointCloud2Ptr cloudPtr(cloud);
     pcl::PCLPointCloud2* cloud2 = new pcl::PCLPointCloud2;
@@ -54,15 +55,15 @@ cloud_cb (const sensor_msgs::PointCloud2Ptr& cloud_msg)
     // filter pointcloud
     radius_filter(cloudPtr, cloud_filteredPtr);
     passthrough(cloud_filteredPtr, cloud_filteredPtr2);
-    voxel_grid(cloud_filteredPtr2, cloud_filteredPtr3);
+    //voxel_grid(cloud_filteredPtr2, cloud_filteredPtr3);
+    road_slope_detection_ros_tool::voxel_grid(cloud_filteredPtr2, cloud_filteredPtr3);
 
 
 
 
     // Convert to ROS data type
     sensor_msgs::PointCloud2 output;
-    pcl_conversions::fromPCL(*cloud_filteredPtr3, output);
-
+    pcl_conversions::fromPCL(*cloud_filteredPtr2, output);
 
     // Publish the data
     pub.publish (output);
@@ -74,31 +75,21 @@ cloud_cb (const sensor_msgs::PointCloud2Ptr& cloud_msg)
 
 
 int main(int argc, char* argv[]) {
-    std::cout << "1" << std::endl;
+
     ros::init(argc, argv, "road_rebuild_node");
-    std::cout << "2" << std::endl;
 
     //road_slope_detection_ros_tool::RoadRebuild road_rebuild(ros::NodeHandle("~"));
     ros::NodeHandle nh;
-    std::cout << "3" << std::endl;
 
     // Create a ROS subscriber for the input point cloud
-    ros::Subscriber sub = nh.subscribe ("/road_pcl", 1, cloud_cb);
-    std::cout << "4" << std::endl;
-
+    ros::Subscriber sub = nh.subscribe ("/point_cloud_transformed", 1, cloud_cb);
 
     pub = nh.advertise<sensor_msgs::PointCloud2> ("/filter_points", 1);
-    std::cout << "5" << std::endl;
-
     std::cout<<"####################"<<std::endl;
-    std::cout << "6" << std::endl;
-
     ros::spin();
-    std::cout << "7" << std::endl;
+
 
     return EXIT_SUCCESS;
-    std::cout << "8" << std::endl;
-
 }
 
 
@@ -117,7 +108,7 @@ void radius_filter(pcl::PCLPointCloud2Ptr cloud,
 }
 
 
-
+/*
 void voxel_grid (pcl::PCLPointCloud2Ptr cloudPtr,
                  pcl::PCLPointCloud2Ptr cloud_filteredPtr)
 {
@@ -132,14 +123,8 @@ void voxel_grid (pcl::PCLPointCloud2Ptr cloudPtr,
     sor.getMinBoxCoordinates();
     sor.filter (*cloud_filteredPtr);
 
-    //std::cerr << "PointCloud after filtering: " << cloud_filtered->width * cloud_filtered->height
-    //          << " data points (" << pcl::getFieldsList (*cloud_filtered) << ")."<< std::endl;
-
-    //pcl::PCDWriter writer;
-    //writer.write ("table_scene_lms400_downsampled.pcd", *cloud_filtered,
-    //              Eigen::Vector4f::Zero (), Eigen::Quaternionf::Identity (), false);
-
 }
+*/
 
 void passthrough(pcl::PCLPointCloud2Ptr cloud,
                  pcl::PCLPointCloud2Ptr cloud_filtered)
@@ -147,7 +132,7 @@ void passthrough(pcl::PCLPointCloud2Ptr cloud,
     pcl::PassThrough<pcl::PCLPointCloud2> pass;
     pass.setInputCloud (cloud);
     pass.setFilterFieldName ("z");
-    pass.setFilterLimits (-0.3, 0.3);
+    pass.setFilterLimits (-50, 0);
     //pass.setFilterLimitsNegative (true);
     pass.filter (*cloud_filtered);
 

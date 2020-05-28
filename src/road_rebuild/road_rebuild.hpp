@@ -1,3 +1,5 @@
+#ifndef ROAD_REBUILD_HPP
+#define ROAD_REBUILD_HPP
 #pragma once
 #include <dynamic_reconfigure/server.h>
 #include <ros/forwards.h>
@@ -25,7 +27,11 @@
 #include <pcl/surface/mls.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/passthrough.h>
-
+#include <pcl/filters/voxel_grid.h>
+#include <iostream>
+#include <pcl/common/io.h>
+#include <pcl/filters/impl/voxel_grid.hpp>
+#include <boost/sort/spreadsort/integer_sort.hpp>
 
 namespace road_slope_detection_ros_tool {
 
@@ -48,5 +54,21 @@ private:
     tf2_ros::TransformBroadcaster tfBroadcaster_;
 };
 
-} // namespace road_slope_detection_ros_tool
 
+using Array4size_t = Eigen::Array<std::size_t, 4, 1>;
+
+class CustomVoxelGrid: public pcl::VoxelGrid<pcl::PCLPointCloud2> {
+
+    using PCLPointCloud2 = pcl::PCLPointCloud2;
+    using PCLPointCloud2Ptr = PCLPointCloud2::Ptr;
+    using PCLPointCloud2ConstPtr = PCLPointCloud2::ConstPtr;
+
+    void applyFilter (pcl::PCLPointCloud2 &output) override;
+};
+
+
+void voxel_grid (pcl::PCLPointCloud2Ptr cloud,
+                 pcl::PCLPointCloud2Ptr cloud_filtered);
+
+} // namespace road_slope_detection_ros_tool
+#endif

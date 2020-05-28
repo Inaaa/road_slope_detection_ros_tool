@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import roslib
 
 import rospy
@@ -23,6 +24,7 @@ import struct
 from matplotlib import pyplot as plt
 
 import time
+import cv2
 
 
 class TransformPointCloud(object):
@@ -32,7 +34,7 @@ class TransformPointCloud(object):
         rospy.init_node('transform_point_cloud')
         self.tf_buffer = tf2_ros.Buffer(cache_time=rospy.Duration(10))
         self.tl = tf2_ros.TransformListener(self.tf_buffer)
-        self.target_frame =  'vehicle'
+        self.target_frame =  'FL_front_color'  #FL_front_color
         self.count=0
 
         self._bridge = CvBridge()
@@ -72,11 +74,22 @@ class TransformPointCloud(object):
     def segment_pointcloud(self, pc_velo, labels):
 
         a = Trans()
+        #pts_2d = a.project_lidar_to_image(pc_velo)
         pts_2d = a.project_camera_to_image(pc_velo)
 
         #pts_2d = a.project_lidar_to_image(pc_velo)
-        fov_inds = (pts_2d[:, 0] < 1200-1) & (pts_2d[:, 0] >= 0) & \
-                   (pts_2d[:, 1] < 800-1) & (pts_2d[:, 1] >= 0)
+        #fov_inds = (pts_2d[:, 1] < 1200-1) & (pts_2d[:, 1] >= 0) & \
+                 #(pts_2d[:, 0] < 800-1) & (pts_2d[:, 0] >= 0) & \
+                   #(pc_velo[:,1]>0 )
+
+        fov_inds = (pts_2d[:, 1] < 1200) & (pts_2d[:, 1] >= 0) & \
+         (pts_2d[:, 0] < 800-1) & (pts_2d[:, 0] >=0 ) #& (pc_velo[:,1]>0 )
+
+        #fov_inds = (pc_velo[:,0]>0 )      #& (pc_velo[:,1]>0)
+        #fov_inds = (pts_2d[:,1]<0) #& ( pts_2d[:, 0] > -1200-1)
+
+
+        
         #fov_inds = fov_inds & (pc_velo[:, 0] > 0) & (pc_velo[:, 0] < 30)
         fov_inds = fov_inds
         imgfov_pc_velo = pc_velo[fov_inds, :]  # points in image
@@ -88,21 +101,29 @@ class TransformPointCloud(object):
         imgfov_pts_2d = np.round(imgfov_pts_2d).astype(int)  # segmented position in image.(pixel)
         road_point = []
 
+        x= imgfov_pts_2d[:,0]
+        y = imgfov_pts_2d[:,1]
+        plt.scatter(x, y, alpha= 0.6)
+        plt.show()
+
+
+
 
 
         print("i max = ", imgfov_pts_2d.shape[0])
         for i in range(imgfov_pts_2d.shape[0]):
 
-            if labels[int(imgfov_pts_2d[i, 1]), int(imgfov_pts_2d[i, 0])] == 125 :
+            if labels[int(imgfov_pts_2d[i, 0]), int(imgfov_pts_2d[i, 1])] == 1 :
                 road_point.append(imgfov_pc_velo[i, :])
 
 
-            elif  labels[int(imgfov_pts_2d[i, 1]), int(imgfov_pts_2d[i, 0])] == 255:
-                road_point.append(imgfov_pc_velo[i, :])
+            #elif  labels[int(imgfov_pts_2d[i, 1]), int(imgfov_pts_2d[i, 0])] == 255:
+            #    road_point.append(imgfov_pc_velo[i, :])
 
 
         road_point = np.array(road_point)
 
+        
         return road_point
 
 
@@ -116,11 +137,19 @@ class TransformPointCloud(object):
         :return: points, type= msg.PointCloud2
         """
         cv_image = self._bridge.imgmsg_to_cv2(data,'passthrough')
-        labels = cv_image[:,:,1]
-        #local_instance_mask = np.array(labels) == 125 or 225
+        labels = cv_image[:,:,0]
 
+        
+        mask = np.array(labels) == 94
+
+        kernel = np.ones((5, 5), np.uint8)
+        erosion = cv2.erode(mask.astype('uint8'), kernel, iterations=1)
+        #local_instance_mask = np.array(mask) == 0
+
+        labels=np.where( labels ==94, labels, 0* labels)
         #plt.figure()
-        #plt.imshow(labels)
+        #plt.imshow(cv_image)
+        #plt.imshow(erosion, alpha= 0.5)
 
         #plt.show()
         
@@ -131,13 +160,22 @@ class TransformPointCloud(object):
         lookup_time = msg.header.stamp + rospy.Duration(10)
         target_frame = self.target_frame
         source_frame = msg.header.frame_id
+        print("source_frame " ,source_frame)
+
+        #self.trans = self.tf_buffer.lookup_transform("FL_front_color", source_frame, rospy.Time(0))  # lookup_time,
 
         if  self.count==0:
             try:
-                self.trans = self.tf_buffer.lookup_transform(target_frame, source_frame, rospy.Time(),
-                                                        rospy.Duration(10)) #lookup_time,
+                self.trans = self.tf_buffer.lookup_transform("vehicle", source_frame, rospy.Time()) #lookup_time,
+
+                self.trans2 = self.tf_buffer.lookup_transform("FL_front_color" , "vehicle", rospy.Time())
+
                 print(self.trans.transform.translation)
                 print(self.trans.transform.rotation)
+
+                print(self.trans2.transform.translation)
+                print(self.trans2.transform.rotation)
+
             except tf2.LookupException as ex:
                 rospy.logwarn(str(lookup_time.to_sec()))
                 rospy.logwarn(ex)
@@ -146,25 +184,30 @@ class TransformPointCloud(object):
                 rospy.logwarn(str(lookup_time.to_sec()))
                 rospy.logwarn(ex)
                 return
-            self.count +=1
 
-        timeb = time.time()
+            self.count +=1
+           
+
 
         cloud_out = do_transform_cloud(msg, self.trans)
+        timeb = time.time()
+        cloud_out2 = do_transform_cloud(cloud_out, self.trans2)
+        
+
         print("!!!!!!!!*****")
         print("time in lookup = ",timeb-timea )
 
         #  tranform from camre to image
         #time0 = time.time()
 
-        point = list(pc2.read_points(cloud_out,field_names = ("x", "y", "z"), skip_nans=True))
+        point = list(pc2.read_points(cloud_out2,field_names = ("x", "y", "z"), skip_nans=True))
 
         #time1 = time.time()
 
         #print("time append",time1-time0)
         points = np.array(point)
 
-        cloud_segment = self.segment_pointcloud(points,labels)
+        cloud_segment = self.segment_pointcloud(points,erosion)
         time2 = time.time()
         #print("coordinate translate",time2-time1)
 

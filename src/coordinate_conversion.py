@@ -4,9 +4,9 @@ from autolab_core import RigidTransform
 class Trans():
     def __init__(self):
 
-        self.P = [160.794342, 0.0, 600.0, 0.0, 0.0, 160.794342, 400.0, 0.0, 0.0, 0.0, 1.0, 0.0 ]
+        self.P = [160.794342169, 0.0, 600.0, 0.0, 0.0, 160.794342169, 400.0, 0.0, 0.0, 0.0, 1.0, 0.0 ]
         self.P = np.reshape(self.P, [3, 4])
-        self.R0 = [1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0]
+        self.R0 = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
         self.R0 = np.reshape(self.R0, [3, 3])
 
     def cart2hom(self, pts_3d):

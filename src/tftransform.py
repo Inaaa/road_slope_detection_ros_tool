@@ -74,23 +74,12 @@ class TransformPointCloud(object):
     def segment_pointcloud(self, pc_velo, labels):
 
         a = Trans()
-        #pts_2d = a.project_lidar_to_image(pc_velo)
+
         pts_2d = a.project_camera_to_image(pc_velo)
 
-        #pts_2d = a.project_lidar_to_image(pc_velo)
-        #fov_inds = (pts_2d[:, 1] < 1200-1) & (pts_2d[:, 1] >= 0) & \
-                 #(pts_2d[:, 0] < 800-1) & (pts_2d[:, 0] >= 0) & \
-                   #(pc_velo[:,1]>0 )
+        fov_inds = (pts_2d[:, 0] < 1200-1) & (pts_2d[:, 0] >= -1200) & \
+         (pts_2d[:, 1] < 800-1) & (pts_2d[:, 1] >=-800 ) #& (pc_velo[:,1]>0 )
 
-        fov_inds = (pts_2d[:, 1] < 1200) & (pts_2d[:, 1] >= 0) & \
-         (pts_2d[:, 0] < 800-1) & (pts_2d[:, 0] >=0 ) #& (pc_velo[:,1]>0 )
-
-        #fov_inds = (pc_velo[:,0]>0 )      #& (pc_velo[:,1]>0)
-        #fov_inds = (pts_2d[:,1]<0) #& ( pts_2d[:, 0] > -1200-1)
-
-
-        
-        #fov_inds = fov_inds & (pc_velo[:, 0] > 0) & (pc_velo[:, 0] < 30)
         fov_inds = fov_inds
         imgfov_pc_velo = pc_velo[fov_inds, :]  # points in image
 
@@ -101,19 +90,15 @@ class TransformPointCloud(object):
         imgfov_pts_2d = np.round(imgfov_pts_2d).astype(int)  # segmented position in image.(pixel)
         road_point = []
 
-        x= imgfov_pts_2d[:,0]
-        y = imgfov_pts_2d[:,1]
+        x= imgfov_pts_2d[:,1]
+        y = imgfov_pts_2d[:,0]
         plt.scatter(x, y, alpha= 0.6)
         plt.show()
-
-
-
-
 
         print("i max = ", imgfov_pts_2d.shape[0])
         for i in range(imgfov_pts_2d.shape[0]):
 
-            if labels[int(imgfov_pts_2d[i, 0]), int(imgfov_pts_2d[i, 1])] == 1 :
+            if labels[int(imgfov_pts_2d[i, 1]), int(imgfov_pts_2d[i, 0])] == 1 :
                 road_point.append(imgfov_pc_velo[i, :])
 
 
@@ -167,14 +152,33 @@ class TransformPointCloud(object):
         if  self.count==0:
             try:
                 self.trans = self.tf_buffer.lookup_transform("vehicle", source_frame, rospy.Time()) #lookup_time,
-
+                print(self.trans.transform.translation)
+                print(self.trans.transform.rotation)
                 self.trans2 = self.tf_buffer.lookup_transform("FL_front_color" , "vehicle", rospy.Time())
+                '''
+                self.trans.transform.translation.x = 0.313
+                self.trans.transform.translation.y = -1.595
+                self.trans.transform.translation.z = -1.590
+                self.trans.transform.rotation.x=0
+                self.trans.transform.rotation.y=0
+                self.trans.transform.rotation.z=-0.131
+                self.trans.transform.rotation.w=0.991
+
+                
+                self.trans.transform.translation.x = 0.313
+                self.trans.transform.translation.y = -1.595
+                self.trans.transform.translation.z = -1.590
+                self.trans.transform.rotation.x=-0.431
+                self.trans.transform.rotation.y=-0.560
+                self.trans.transform.rotation.z=0.561
+                self.trans.transform.rotation.w=0.431
+                '''
 
                 print(self.trans.transform.translation)
                 print(self.trans.transform.rotation)
 
-                print(self.trans2.transform.translation)
-                print(self.trans2.transform.rotation)
+                #print(self.trans2.transform.translation)
+                #print(self.trans2.transform.rotation)
 
             except tf2.LookupException as ex:
                 rospy.logwarn(str(lookup_time.to_sec()))
@@ -186,7 +190,7 @@ class TransformPointCloud(object):
                 return
 
             self.count +=1
-           
+
 
 
         cloud_out = do_transform_cloud(msg, self.trans)
@@ -201,21 +205,11 @@ class TransformPointCloud(object):
         #time0 = time.time()
 
         point = list(pc2.read_points(cloud_out2,field_names = ("x", "y", "z"), skip_nans=True))
-
-        #time1 = time.time()
-
-        #print("time append",time1-time0)
         points = np.array(point)
-
         cloud_segment = self.segment_pointcloud(points,erosion)
-        time2 = time.time()
-        #print("coordinate translate",time2-time1)
-
-
-        #print("generate filter points1111111111")
-
         cloud_seg=self.pointcloud_ge(cloud_segment)
-        #print("coordinate translate",time.time()-time2)
+
+
         self.pub.publish(cloud_seg)
         print("generate filter points")
       

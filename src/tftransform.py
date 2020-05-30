@@ -77,8 +77,8 @@ class TransformPointCloud(object):
 
         pts_2d = a.project_camera_to_image(pc_velo)
 
-        fov_inds = (pts_2d[:, 0] < 1200-1) & (pts_2d[:, 0] >= -1200) & \
-         (pts_2d[:, 1] < 800-1) & (pts_2d[:, 1] >=-800 ) #& (pc_velo[:,1]>0 )
+        fov_inds = (pts_2d[:, 0] < 1200-1) & (pts_2d[:, 0] >= -0) & \
+         (pts_2d[:, 1] < 800-1) & (pts_2d[:, 1] >=-0 ) #& (pc_velo[:,1]>0 )
 
         fov_inds = fov_inds
         imgfov_pc_velo = pc_velo[fov_inds, :]  # points in image
@@ -89,25 +89,32 @@ class TransformPointCloud(object):
 
         imgfov_pts_2d = np.round(imgfov_pts_2d).astype(int)  # segmented position in image.(pixel)
         road_point = []
+        road_pos = []
 
-        x= imgfov_pts_2d[:,1]
-        y = imgfov_pts_2d[:,0]
-        plt.scatter(x, y, alpha= 0.6)
-        plt.show()
+        x= imgfov_pts_2d[:,0]
+        y = imgfov_pts_2d[:,1]
+        #plt.scatter(x, y, alpha= 0.6)
+
+        #plt.show()
 
         print("i max = ", imgfov_pts_2d.shape[0])
         for i in range(imgfov_pts_2d.shape[0]):
 
             if labels[int(imgfov_pts_2d[i, 1]), int(imgfov_pts_2d[i, 0])] == 1 :
                 road_point.append(imgfov_pc_velo[i, :])
-
+                road_pos.append([int(imgfov_pts_2d[i, 1]), int(imgfov_pts_2d[i, 0])])
 
             #elif  labels[int(imgfov_pts_2d[i, 1]), int(imgfov_pts_2d[i, 0])] == 255:
             #    road_point.append(imgfov_pc_velo[i, :])
 
 
         road_point = np.array(road_point)
+        road_pos = np.array(road_pos)
 
+        x= road_pos[:,0]
+        y = road_pos[:,1]
+        #plt.scatter(x, y, alpha= 0.6)
+        #plt.show()
         
         return road_point
 
@@ -155,6 +162,7 @@ class TransformPointCloud(object):
                 print(self.trans.transform.translation)
                 print(self.trans.transform.rotation)
                 self.trans2 = self.tf_buffer.lookup_transform("FL_front_color" , "vehicle", rospy.Time())
+
                 '''
                 self.trans.transform.translation.x = 0.313
                 self.trans.transform.translation.y = -1.595
@@ -163,7 +171,7 @@ class TransformPointCloud(object):
                 self.trans.transform.rotation.y=0
                 self.trans.transform.rotation.z=-0.131
                 self.trans.transform.rotation.w=0.991
-
+                
                 
                 self.trans.transform.translation.x = 0.313
                 self.trans.transform.translation.y = -1.595
@@ -232,7 +240,7 @@ class TransformPointCloud(object):
 
         header = Header()
         #header.frame_id = 'sensor/lidar/velodyne/fl'
-        header.frame_id = self.target_frame
+        header.frame_id = "vehicle"
 
         point_generate = pc2.create_cloud(header, fields, pointcloud)
         point_generate.header.stamp = rospy.Time.now()
